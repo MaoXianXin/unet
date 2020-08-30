@@ -1,8 +1,8 @@
 from model import *
 from data import *
 import tensorflow as tf
-os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
-os.environ["CUDA_VISIBLE_DEVICES"]="1"
+# os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
+# os.environ["CUDA_VISIBLE_DEVICES"]="1"
 gpus = tf.config.experimental.list_physical_devices('GPU')
 if gpus:
     try:
@@ -19,9 +19,13 @@ data_gen_args = dict(rotation_range=0.2,
                     zoom_range=0.05,
                     horizontal_flip=True,
                     fill_mode='nearest')
-myGene = trainGenerator(2,'data/membrane/train','image','label',data_gen_args,save_to_dir = None)
+myGene = trainGenerator(32,'data/membrane/train','image','label',data_gen_args,save_to_dir = 'aug')
 
-model = unet()
+strategy = tf.distribute.MirroredStrategy()
+with strategy.scope():
+    model = unet()
+    model.compile(optimizer = Adam(lr = 1e-4), loss = 'binary_crossentropy', metrics = ['accuracy'])
+
 model_checkpoint = ModelCheckpoint('unet_membrane.hdf5', monitor='loss',verbose=1, save_best_only=True)
 model.fit(myGene,steps_per_epoch=300,epochs=10,callbacks=[model_checkpoint])
 
