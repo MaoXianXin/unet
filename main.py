@@ -27,7 +27,7 @@ with strategy.scope():
     model.compile(optimizer = Adam(lr = 1e-4), loss = 'binary_crossentropy', metrics = ['accuracy'])
 
 model_checkpoint = ModelCheckpoint('unet_membrane.hdf5', monitor='loss',verbose=1, save_best_only=True)
-model.fit(myGene,steps_per_epoch=300,epochs=10,callbacks=[model_checkpoint])
+model.fit(myGene,steps_per_epoch=300,epochs=1,callbacks=[model_checkpoint])
 
 testGene = testGenerator("data/membrane/test")
 results = model.predict(testGene,30,verbose=1)
