@@ -19,7 +19,7 @@ data_gen_args = dict(rotation_range=0.2,
                     zoom_range=0.05,
                     horizontal_flip=True,
                     fill_mode='nearest')
-myGene = trainGenerator(32,'data/membrane/train','image','label',data_gen_args,save_to_dir = 'aug')
+myGene = trainGenerator(32,'data/membrane/train','image','label',data_gen_args,save_to_dir = None)
 
 strategy = tf.distribute.MirroredStrategy()
 with strategy.scope():
